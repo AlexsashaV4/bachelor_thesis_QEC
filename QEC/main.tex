@@ -1,0 +1,229 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+% VARIATIONAL MONTE CARLO METHODS FOR QUANTUM DOTS, by Matteo Seclì           %
+%                                                                             %
+% This eBook is meant to be used as the BSc Thesis of the author.             %
+% The predicted date of the discussion is 22/07/2015 at the University of     %
+% Trento.                                                                     %
+%                                                                             %
+% For licensing information, look at the LICENSE file shipped with this       %
+% document.                                                                   %
+%                                                                             %
+% The original location of this project is at                                 %
+% https://github.com/matteosecli/QMC.                                         %
+%                                                                             %
+% Title: Variational Monte Carlo Methods for quantum dots                     %
+%                                                                             %
+% Author: Matteo Seclì <secli.matteo@gmail.com>                               %
+%                                                                             %
+% Language: English                                                           %
+%                                                                             %
+% Character set encoding: UTF-8                                               %
+%                                                                             %
+% *** START OF THIS BACHELOR THESIS PROJECT ***                               %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Basic class definitions, typesetting, bibliography      %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[a4paper,twoside,11pt]{book}
+\usepackage[utf8]{inputenc}
+\usepackage{type1cm}
+\usepackage{setspace}
+\usepackage[english]{babel}
+\usepackage{datetime}
+
+\usepackage[backend=bibtex, sorting=none]{biblatex}
+\addbibresource{bibliography.bib}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Hyperref configuration                                  %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[%hypertex,
+	unicode=true,
+	plainpages = false, 
+	pdfpagelabels, 
+	bookmarks=true,
+	bookmarksnumbered=true,
+    bookmarksopen=true,
+	breaklinks=true,
+	backref=false,
+	colorlinks=true,
+	linkcolor = blue,		% Use "blue" if you want to highlight them
+	urlcolor  = blue,
+	citecolor = red,
+	anchorcolor = green,
+	hyperindex = true,
+	linktocpage = true,
+	hyperfigures
+]{hyperref}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Grahpics                                                %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{blochsphere}
+
+
+\usepackage{graphicx}
+\usepackage{xcolor}
+\graphicspath{{figures/PNG/}{figures/PDF/}{figures/}}
+\usepackage{tikz}
+\usepackage[siunitx]{circuitikz}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Standard environments                                   %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{float}
+\usepackage[font={small,it}]{caption}[2013/01/06] % Minimum version required for incompatibility with breqn
+\usepackage{subcaption}
+\usepackage{listingsutf8}
+\usepackage{enumitem}
+\usepackage{amsmath,scalerel}
+
+\DeclareMathOperator*{\Bigcdot}{\scalerel*{\cdot}{\bigodot}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Math                                                    %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{amsmath}
+\usepackage{amssymb}	
+\usepackage{float}
+\usepackage{amsthm}
+\usepackage{cancel}
+\usepackage{braket}
+\usepackage{siunitx}
+\DeclareSIUnit\atomicunit{a.u.}
+\usepackage{breqn}
+\usepackage{geometry}
+\usepackage{tikz}
+\usepackage{wrapfig}
+\usetikzlibrary{quantikz}
+\usepackage{braket}
+\renewenvironment{proof}{\vskip 1em \noindent\textsc{Proof:}}{\begin{flushright}$\blacksquare$\end{flushright}\vskip 1em}
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% datetime specific configuration                         %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newdateformat{monthyear}{\monthname[\THEMONTH] \THEYEAR}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TikZ specific configuration                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usetikzlibrary{shapes.geometric, arrows, patterns}
+\tikzstyle{startstop} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm,text centered, draw=black, fill=red!30]
+\tikzstyle{io} = [trapezium, trapezium left angle=70, trapezium right angle=110, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=blue!30]
+\tikzstyle{process} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, text width=3cm, draw=black, fill=orange!30]
+\tikzstyle{decision} = [diamond, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=green!30]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% xcolor specific configuration                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{dred}{rgb}{0.545,0,0}
+\definecolor{dblue}{rgb}{0,0,0.545}
+\definecolor{lgrey}{rgb}{0.9,0.9,0.9}
+\definecolor{gray}{rgb}{0.4,0.4,0.4}
+\definecolor{darkblue}{rgb}{0.0,0.0,0.6}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ListingsUTF8 specific configuration                     %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstdefinelanguage{cpp}{
+	backgroundcolor=\color{lgrey},  
+	basicstyle=\footnotesize \ttfamily \color{black} \bfseries,   
+	breakatwhitespace=false,       
+	breaklines=true,               
+	captionpos=b,                   
+	commentstyle=\color{dkgreen},   
+	deletekeywords={...},          
+	escapeinside={\%*}{*)},                  
+	frame=single,                  
+	language=C++,                
+	keywordstyle=\color{purple},  
+	morekeywords={BRIEFDescriptorConfig,string,TiXmlNode,DetectorDescriptorConfigContainer,
+		istringstream,cerr,exit}, 
+	identifierstyle=\color{black},
+	stringstyle=\color{blue},      
+	numbers=right,                 
+	numbersep=5pt,                  
+	numberstyle=\tiny\color{black}, 
+	rulecolor=\color{black},        
+	showspaces=false,               
+	showstringspaces=false,        
+	showtabs=false,                
+	stepnumber=1,                   
+	tabsize=5,                     
+	title=\lstname,                 
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Some black magic                                        %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\makeatletter
+%	\renewcommand{\bibsection}{\chapter{\bibname}}
+%\makeatother
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Metadata                                                %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\THauthor{Alexander Ferraro}
+\def\THsupervisor{Philipp Hans Juergen Hauke, University of Trento}
+%\def\THextrasupervisor{Francesco Pederiva, UniTN}
+\def\THtitle{Quantum Error Correction} % title
+\def\THdate{\monthyear\today}
+\def\THplace{Trento}
+\title{\THtitle}
+\author{\THauthor}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Actual text                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}[chapter]
+\begin{document}
+
+\frontmatter
+\include{Frontmatter/titlepage}
+\onehalfspacing	% Set 1.5 lines spacing for better readability
+\include{Frontmatter/preface}
+\include{Frontmatter/introduction}
+
+\tableofcontents
+
+\mainmatter
+\include{Mainmatter/Qubits}
+\include{Mainmatter/Density_matrix}
+\include{Mainmatter/Noise_and_enviroment}
+\include{Mainmatter/Three_bit_code}
+\include{Mainmatter/Quantum_code_distance}
+\include{Mainmatter/Fault_tholerant}
+%\chapter{Entanglement purification and Quantum error correction}
+%\include{Mainmatter/EPP}
+\chapter{Conclusions}
+\include{Mainmatter/conclusion}
+\chapter{Appendix}
+\include{Mainmatter/Appendix}
+\backmatter
+\include{Backmatter/references}
+\printbibliography
+\nocite{*}
+\end{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+% *** END OF THIS BACHELOR THESIS PROJECT ***                                 %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

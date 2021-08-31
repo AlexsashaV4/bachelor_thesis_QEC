@@ -1,0 +1,138 @@
+
+
+
+
+
+
+\section{Density operator}
+The formalism for pure quantum states does not immediately allow for a formalisation of ignorance or missing knowledge about the state of a quantum system.
+Suppose that the mechanism that generates replicas of the same system does not always produce the same pure state but produces several of them. We do not exactly know in what state our system is, but instead we are given with some possible states $\ket{\psi_{\lambda}}$ with probability $p_{\lambda}$. The set (or ensemble) of replicas corresponds to a mixture of pure states. This mixture is called mixed state or mixed ensemble. 
+%I want to emphasise that the mixture cannot be described as a superposition of the orthonormal basis in the Hilbert space that characterise the system.
+In quantum mechanics the density matrix operator is an useful tool to describe an ensemble of quantum states. It is a generalization of the more usual state vectors approach, which can only describe pure states. 
+A pure state is by definition:
+\begin{equation}
+    \ket{\psi} = \sum_j c_j \ket{\psi_j}
+\end{equation}
+where the coefficients $c_j$ are complex numbers $\ket{\psi_j}$ are the eigenvectors of an observable (for instance, in quantum computing the most common observable is the spin along the z axes $S_z$, which indicates the computational basis $\ket{0}$ and $\ket{1}$) that constitute a complete orthonormal basis in the Hilbert space for the states describing the system.
+In fact, a pure quantum state can be represented by a ray in a Hilbert space over the complex numbers, while mixed states are represented by density matrices, which are positive semidefinite operators that act on Hilbert spaces.
+
+
+Using density operator we can represent mixed states (ensemble of pure states), which no longer can be expressed as kets but are characterized by the density operator. 
+%Mixed states arise in quantum mechanics in different situations. For example, fluactuation in experiment...
+%or if the same state goes through a noisy channel, at the end of the channel we could have different states with different probability p, ... 
+
+
+We call $\{p_{\lambda}, \ket{\psi_{\lambda}} \}$ an ensemble of pure state, where $p_{\lambda}$ are real numbers that indicate the classical probability to pick up a pure state $\ket{\psi_{\lambda}}$ from the ensemble. Recall the fact that the probabilities $p_{\lambda}$ are real numbers without a phase between them, instead the coefficients of a decomposition are related by a phase. 
+%We can represent a mixed state in the bloch sphere, for instance $\{(p_0=\frac{1}{2})|\ket{0}, (p_1=\frac{1}{2})|\ket{1}\}$ can be seen as a new bloch sphere with halved radius. 
+
+Describing the state of a quantum system with such probabilistic mixtures opens up the possibility of having non-reversible evolution. 
+
+For instance, in the case of a qubit, we might start in a certain state $\ket{\psi} = a\ket{\psi}+ b\ket{\psi}$ with unit probability, but if we measure the state the knowledge is lost or transferred to another register or ignored such that the final probabilistic mixture describing the qubit’s state is $\{(p_0=\frac{1}{2})|\ket{0}, (p_1=\frac{1}{2})|\ket{1}\}$. That is, we have a uniform probability distribution over the computational basis states. Certainly, this evolution is not reversible as the final probabilistic mixture alone does not allow for a reconstruction of the initial state, because the same measurements results can be given by a mixture of states ($\{(p_0=\frac{1}{2})|\ket{0}, (p_1=\frac{1}{2})|\ket{1}\}$) or by a single state in a superposition ($\ket{\psi} = a\ket{\psi}+ b\ket{\psi}$) as well, we can't distinguish the two cases. Therefore, we have to take care about the procedure that we adopt to solve the problem.
+In the light of the above, the density operator or density matrix of the system is defined: 
+\begin{equation}
+    \rho = \sum_{\lambda} p_{\lambda} \ket{\psi_{\lambda}}\bra{\psi_{\lambda}} 
+    \label{eq:density}
+\end{equation}
+with the constrain that $\sum_{\lambda} p_{\lambda}=1$
+. If the system is composed by only one pure state, the density matrix is: 
+\begin{equation}
+    \rho = \ket{\psi}\bra{\psi}
+\end{equation}
+%The matrix representation depends on the basis that we chose, for example, a density matrix that represent a single qubit can be represented with $\ket{0},\ket{1}$ as a basis: 
+% \begin{equation}
+%      \rho_{mn} = \bra{m}\ket{\psi}\bra{\psi}\ket{n}= \begin{pmatrix} a \\ b \end{pmatrix} 
+%   \begin{pmatrix} a \\ b \end{pmatrix}^{\dagger} = \begin{pmatrix} |a|^2 & ab^* \\ ba^* & |b|^2  \end{pmatrix}
+% \end{equation}
+A way to estimate how pure a system is, one can compute the trace of $\rho^2$ since this is always less than 1. In fact: 
+\begin{equation*}
+    Tr(\rho) = Tr(\rho_d) = \sum_{\lambda}p_{\lambda} \leq 1
+\end{equation*}
+If the probabilities $p_{\lambda}$ are all zero except the one for some $\lambda'$ for which $p_{\lambda'}=1$, then the ensemble corresponds to a set of replicas of a system in the same pure state $\ket{\psi_{\lambda}}$.
+To evaluate the expectation value of a generic observable $Q$ over this ensemble, we have to add up the expectation values we obtain for each pure state, weighing them with the probabilities $p_{\lambda}$:
+$$
+\langle Q\rangle_{mix}=\sum_{\lambda} p_{\lambda}\left\langle\psi_{\lambda}|Q| \psi_{\lambda}\right\rangle=\sum_{\lambda} p_{\lambda} \sum_{i, j} c_{i}^{*(\lambda)} c_{j}^{(\lambda)}\left\langle a_{i}|Q| a_{j}\right\rangle
+$$
+where the coefficients  $c_{j}^{(p)}=\left\langle a_{j} \mid \psi_{\lambda}\right\rangle$ are those of the state decomposition $\left|\psi_{\lambda}\right\rangle$ on the basis of the eigenvectors of $A$ (observable that characterises the system, for a qubit can be the spin along the z direction, which gives $\ket{0}$ and $\ket{1}$ as basis vector).
+$$
+\begin{aligned}
+\langle Q\rangle_{mix} &=\sum_{\lambda} p_{\lambda} \sum_{i, j} \left\langle a_{i}|Q| a_{j}\right\rangle  \left\langle\psi_{\lambda} \mid a_{i}\right\rangle\left\langle a_{j} \mid \psi_{\lambda}\right\rangle\\
+&=\sum_{i, j} \left\langle a_{i}|Q| a_{j}\right\rangle \left(\sum_{\lambda} p_{\lambda} \left\langle a_{j} \mid \psi_{\lambda}\right\rangle\left\langle\psi_{\lambda} \mid a_{i}\right\rangle\right) \\
+&=\sum_{ij} \bra{a_j} Q \ket{a_i} \bra{a_i} \rho\ket{a_j}\\
+&=\sum_{j} \bra{a_j} Q \left(\sum_i \ket{a_i}\bra{a_i} \right) \rho\ket{a_j} \\
+&=\sum_{j} \bra{a_j}Q \rho \ket{a_j} = tr(Q \rho)
+\end{aligned}
+$$
+
+% Moreover, for each measurement that can be defined, the probability distribution over the outcomes of that measurement can be computed from the density operator using the Born rule\footnote{The Born rule states that if an observable corresponding to a self-adjoint operator $A$ with discrete spectrum is measured in a system with normalized wave function $|\psi\rangle$, then:
+
+
+%  1) the measured result will be one of the eigenvalues $a$ of $A$
+ 
+ 
+%     2) the probability of measuring a given eigenvalue $a_{i}$ will equal $\left\langle\psi\left|P_{i}\right| \psi\right\rangle$, where $P_{i}$ is the projection onto the eigenspace of $A$ corresponding to $a_{i}$
+% saying that probability is equal to the amplitude-squared. Equivalently, the probability can be written as $|\braket{ a_{i} \mid \psi}|^{2}$).}
+
+% When performing a measurement $\left\{\Pi_{x}\right\}_{x}$ on a probabilistic mixture we expect to obtain an outcome $x$ with a certain probability
+%   $$
+%   .\operatorname{Pr}\left[x \mid\left\{\left(p_{\lambda},\ket{\psi_{\lambda}}\right)\right\}_{\lambda}\right]=\sum_{\lambda} \operatorname{Pr}\left[\ket{\psi_{\lambda}}\right] \cdot \operatorname{Pr}\left[x|| \psi_{\lambda}\right\rangle]
+%  $$
+%  This is the formula for conditional probabilities, where $\operatorname{Pr}\left[\ket{\psi_{\lambda}}\right]=p_{\lambda}$ is the probability to find the system in $\ket{\psi_{\lambda}}$ and $\left.\operatorname{Pr}\left[x|| \psi_{\lambda}\right\rangle\right]=\left\langle\psi_{\lambda}\left|\Pi_{x}\right| \psi_{\lambda}\right\rangle$ is the probability to obtain outcome $x$ given that the quantum system's state is $\ket{\psi_{\lambda}} .$ Hence the probability of obtaining outcome $x$ can be rewritten as
+%  $$
+%  \operatorname{Pr}\left[x \mid\left\{\left(p_{\lambda},\ket{\psi_{\lambda}}\right)\right\}_{\lambda}\right]=\sum_{\lambda} p_{\lambda}\left\langle\psi_{\lambda}\left|\Pi_{x}\right| \psi_{\lambda}\right\rangle= \operatorname{tr}\left(\Pi_{x}\rho\right)
+%  $$
+%  where $\rho$  is the density operator, and 
+%  $\Pi_x$ is the projection operator onto the basis vector corresponding to the measurement outcome $x$.
+%  A measurement upon a quantum system will generally bring about a change of the quantum state of that system. We can ....
+ %where we used the definition of the trace, in the second equality.
+ 
+ %Since the trace is a linear operator, we can bring this formula into its final form
+%  $$
+%  \operatorname{Pr}\left[x \mid\left\{\left(p_{\lambda},\ket{\psi_{\lambda}}\right)\right\}_{\lambda}\right]=\operatorname{tr}\left(\Pi_{x} \sum_{\lambda} p_{\lambda}\left|\psi_{\lambda} X \psi_{\lambda}\right|\right)
+%  $$
+% We conclude that what determines the outcome probabilities of a given measurement is the density operator \ref{eq:density}.
+Another advantage of working with the density matrix notation is that, when dealing with composite systems, for example system and environment, it provides a practical way to extract the state of each subsystem, even if they are entangled. This is done in the form of what is known as the reduced density matrix.
+Consider a quantum system composed of subsystems $A$ and $B$, and fully described by the density matrix $\rho_{A B}$. The reduced density matrix of subsystem $A$ is then given by:
+$$
+\rho_{A}=\operatorname{Tr}_{B}\left(\rho_{A B}\right)
+$$
+Here, $\operatorname{Tr}_{B}$ is an operation known as the partial trace, which is defined as:
+$$
+\operatorname{Tr}_{B}\left(\left|\psi_{u}\right\rangle\left\langle\psi_{v}|\otimes| \varphi_{u}\right\rangle\left\langle\varphi_{v}\right|\right) \equiv\left|\psi_{u}\right\rangle\left\langle\psi_{v}\right| \operatorname{Tr}\left(\left|\varphi_{u}\right\rangle\left\langle\varphi_{v}\right|\right)
+$$
+$\left|\psi_{u}\right\rangle$ and $\left|\psi_{v}\right\rangle$ are arbitrary states in the subspace of $A$, and $\left|\varphi_{u}\right\rangle$ and $\left|\varphi_{v}\right\rangle$ arbitrary states in the subspace of $B$. $Tr$ is the standard trace operation, which for two arbitrary states $\operatorname{Tr}\left(\left|\varphi_{u}\right\rangle\left\langle\varphi_{v}\right|\right)=\left\langle\varphi_{v} \mid \varphi_{u}\right\rangle .$ 
+As an example, let's reconsider the pure entangled state:
+$$
+\left|\Phi^{+}_{A B}\right\rangle=\frac{1}{\sqrt{2}}\left(\left|0_{A} 0_{B}\right\rangle+\left|1_{A} 1_{B}\right\rangle\right)
+$$
+This system is then composed of single-qubit subsystem $A$ with basis vectors $\left\{\left|\psi_{1}\right\rangle,\left|\psi_{2}\right\rangle\right\}=\left\{\left|0_{A}\right\rangle,\left|1_{A}\right\rangle\right\}$, and single-qubit subsystem $B$ with basis vectors $\left\{\left|\varphi_{1}\right\rangle,\left|\varphi_{2}\right\rangle\right\}=\left\{\left|0_{B}\right\rangle,\left|1_{B}\right\rangle\right\} .$ We know that this system is not separable; however, by using the reduced density matrix, we can find a full description for subsystems $A$ and $B$ as follows.
+
+The density matrix of our state $\left|\Phi^{+}_{A B}\right\rangle$ can be expressed in terms of outer products of the basis vectors:
+$$
+\rho_{A B}=\left|\psi_{A B}\right\rangle\left\langle\psi_{A B}\right|=\frac{1}{2}\left[\left|0_{A} 0_{B}\right\rangle\left\langle 0_{A} 0_{B}|+| 0_{A} 0_{B}\right\rangle\left\langle 1_{A} 1_{B}|+| 1_{A} 1_{B}\right\rangle\left\langle 0_{A} 0_{B}|+| 1_{A} 1_{B}\right\rangle\left\langle 1_{A} 1_{B}\right|\right]
+$$
+Then, for example, the reduced density matrix for the subsystem $B$ is:
+\begin{align*}
+\rho_{B} &=\operatorname{Tr}_{A}\left(\rho_{A B}\right) \\
+&=\frac{1}{2}\left[\operatorname{Tr}_{A}\left(\left|0_{A} 0_{B}\right\rangle\left\langle 0_{A} 0_{B}\right|\right)+\operatorname{Tr}_{A}\left(\left|0_{A} 0_{B}\right\rangle\left\langle 1_{A} 1_{B}\right|\right)+\operatorname{Tr}_{A}\left(\left|1_{A} 1_{B}\right\rangle\left\langle 0_{A} 0_{B}\right|\right)+\operatorname{Tr}_{A}\left(\left|1_{A} 1_{B}\right\rangle\left\langle 1_{A} 1_{B}\right|\right)\right] \\
+&=\frac{1}{2}[\operatorname{Tr}\left(\ket{0_A}\bra{0_A}\right)\ket{0_B}\bra{0_B}] +
+\operatorname{Tr}\left(\ket{0_A}\bra{1_A}\right)\ket{0_B}\bra{1_B} + 
+\operatorname{Tr}\left(\ket{1_A}\bra{0_A}\right)\ket{1_B}\bra{0_B}+ \\
+&+ \operatorname{Tr}\left(\ket{1_A}\bra{1_A}\right)\ket{1_B}\bra{1_B}
+\\
+ &=\frac{1}{2}\left[\left\langle 0_{A} \mid 0_{A}\right\rangle\left|0_{B}\right\rangle\left\langle 0_{B}\left|+\left\langle 1_{A} \mid 0_{A}\right\rangle\right| 0_{B}\right\rangle\left\langle 1_{B}\left|+\left\langle 0_{A} \mid 1_{A}\right\rangle\right| 1_{B}\right\rangle\left\langle 0_{B}\left|+\left\langle 1_{A} \mid 1_{A}\right\rangle\right| 1_{B}\right\rangle\left\langle 1_{B}\right|\right] \\
+ &=\frac{1}{2}\left[\left|0_{B}\right\rangle\left\langle 0_{B}|+| 1_{B}\right\rangle\left\langle 1_{B}\right|\right] =\frac{I}{2}
+\end{align*}
+
+It is worth mentioning that so far we have described the concept of partial trace for a bipartite (two-part) system, but this can be generalized for multi-part systems.
+
+
+
+
+Moreover, Using the density operator formalism we can successfully study the evolution of a closed quantum system, we will describe it better considering different type of noise and evolution in the next sections. The time evolution is usually described by the unitary operator $U(t,t_0)$. If the system was initially in the state $\ket{\psi_{\lambda}}$ with probability $\psi_{\lambda}$ then after the evolution has occurred the system will be in the state $U\ket{\psi_{\lambda}}$ with the same classical probability probability . Thus, the evolution of the density operator is described by the equation: 
+\begin{equation}
+    \rho = \sum_{\lambda} p_{\lambda} U\ket{\psi_{\lambda}}\bra{\psi_{\lambda}}U^{\dagger} = U\rho U^{\dagger}
+\end{equation}
+%Moreover, using the density operator language we can describe the  measurements on the 
+%It is important the difference between the weight or the classical probability from the coefficients of a superposition. 
+The density operator approach really shines for two applications: the description of quantum systems whose state is not known, and the description of subsystems of a composite. 
+
