@@ -115,7 +115,12 @@ qc_3qx.x(0).c_if(cr, 1) ###condition is in binary
 qc_3qx.x(1).c_if(cr, 3)
 qc_3qx.x(2).c_if(cr, 2)
 qc_3qx.barrier()
-
+###
+#Decoding
+###
+qc_3qx.cx(0,1)
+qc_3qx.cx(0,2)
+qc_3qx.barrier()
 ###
 # Simulation
 ###
