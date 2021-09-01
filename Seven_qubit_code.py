@@ -36,9 +36,9 @@ qe.unitary(ident3, all_qubits, label='error')
 # Create the quantum circuit with the initial state
 #######
 qc_3qx = QuantumCircuit(7)
-#initial_state = [1/np.sqrt(2), np.sqrt(1)/np.sqrt(2)] 
-initial_state = [1,0] 
-qc_3qx.initialize(initial_state, 0) # Initialize the 0th qubit in the state `initial_state`
+#initial_state = [1/np.sqrt(3), np.sqrt(2)/np.sqrt(3)] 
+#initial_state = [1,0] 
+#qc_3qx.initialize(initial_state, 0) # Initialize the 0th qubit in the state `initial_state`
 qc_3qx.barrier()
 
 ###
@@ -101,8 +101,8 @@ noise_model.add_all_qubit_quantum_error(bit_flip6, 'error')
 # qc_3qx.add_register(cr2)
 # qc_3qx.measure(all_qubits,all_qubits)
 # qc_3qx.draw('mpl')
-basis_gates = noise_model.basis_gates
-print(basis_gates)
+# basis_gates = noise_model.basis_gates
+# print(basis_gates)
 # result = execute(qc_3qx, Aer.get_backend('qasm_simulator'),
 #                   noise_model=noise_model,shots=1000).result()
 # counts = result.get_counts(0)
@@ -144,7 +144,6 @@ for i in range(0,stab2X.num_qubits-1):
 stab3X=QuantumCircuit(5, name='M6') #XIXIXIX
 for i in range(0,stab3X.num_qubits-1):
     stab3X.cx(4,i)
-
 qc_3qx.append(stab1Z,[3,4,5,6,7])
 qc_3qx.append(stab2Z,[1,2,5,6,8])
 qc_3qx.append(stab3Z,[0,2,4,6,9])
@@ -161,10 +160,9 @@ qc_3qx.draw('mpl',scale=0.5)
 #counts=execute(qc_3qx, aer_sim, shots=10000).result().get_counts()
 #plot_histogram(counts)
 #plt.show()
-counts=execute(qc_3qx, aer_sim, noise_model= noise_model, shots=10000).result().get_counts()
-plot_histogram(counts)
-plt.show()
-
+# counts=execute(qc_3qx, aer_sim, noise_model= noise_model, shots=10000).result().get_counts()
+# plot_histogram(counts)
+# plt.show()
 
 # ###
 # #Recovery 
@@ -178,23 +176,24 @@ qc_3qx.x(4).c_if(cr, 5)
 qc_3qx.x(5).c_if(cr, 3)
 qc_3qx.x(6).c_if(cr, 7)
 qc_3qx.barrier()
-
-#####
-# Decoding
-#####
+# qc_3qx.draw('mpl')
+# plt.show()
+# #####
+# # Decoding
+# #####
 qc_3qx.append(Encoding7().inverse(),all_qubits)
 cr2=ClassicalRegister(7, 'outcomes')
 qc_3qx.add_register(cr2)
-qc_3qx.measure(all_qubits,all_qubits)
+qc_3qx.measure(all_qubits,cr2)
 #qc_3qx.draw('mpl')
-# counts=execute(qc_3qx, aer_sim, shots=10000).result().get_counts()
-# plot_histogram(counts)
-# plt.show()
+# # counts=execute(qc_3qx, aer_sim, shots=10000).result().get_counts()
+# # plot_histogram(counts)
+plt.show()
 
-###
-# Simulation
-###
-#qc_3qx.draw('mpl',scale=0.5)
+# ###
+# # Simulation
+# ###
+# #qc_3qx.draw('mpl',scale=0.5)
 counts=execute(qc_3qx,backend = aer_sim, noise_model= noise_model, shots=10000).result().get_counts()
 plot_histogram(counts)
 print(counts)
