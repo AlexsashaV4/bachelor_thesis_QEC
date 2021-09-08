@@ -76,7 +76,6 @@ noise_model.add_all_qubit_quantum_error(bit_flip2, 'error')
 # Measurement just after the noise, to se the effect of the noise
 # uncomment these lines 
 #######
-
 # cr2=ClassicalRegister(3, 'outcome')
 # qc_3qx.add_register(cr2)
 # qc_3qx.measure([0,1,2],[0,1,2])
@@ -86,7 +85,7 @@ noise_model.add_all_qubit_quantum_error(bit_flip2, 'error')
 # result = execute(qc_3qx, Aer.get_backend('qasm_simulator'),
 #                   noise_model=noise_model,shots=100000).result()
 # counts = result.get_counts(0)
-# plot_histogram(counts)
+# plot_histogram(counts, sort="hamming", target_string="000")
 # plt.show()
 
 
@@ -98,6 +97,7 @@ anc=QuantumRegister(k, 'auxiliary') ### Ancilla qubit
 qc_3qx.add_register(anc)
 cr=ClassicalRegister(k, 'syndrome') ### Classical register for syndrome extraction
 qc_3qx.add_register(cr)
+qc_3qx.barrier()
 qc_3qx.cx(0,3)
 qc_3qx.cx(1,3)
 qc_3qx.cx(1,4)
@@ -118,16 +118,18 @@ qc_3qx.barrier()
 ###
 #Decoding
 ###
-qc_3qx.cx(0,1)
 qc_3qx.cx(0,2)
+qc_3qx.cx(0,1)
 qc_3qx.barrier()
 ###
 # Simulation
 ###
+qc_3qx.draw('mpl', scale=0.8, filename='3bitflipcode.png')
 cr2=ClassicalRegister(3, 'outcome')
 qc_3qx.add_register(cr2)
 qc_3qx.measure([0,1,2],[2,3,4])
-qc_3qx.draw('mpl')
+
 counts=execute(qc_3qx,backend = aer_sim, optimization_level=0, noise_model= noise_model, shots=10000).result().get_counts()
-plot_histogram(counts)
+fig=plot_histogram(counts, figsize=(6,4))
+fig.savefig('outcome3bitflip.png')
 plt.show()

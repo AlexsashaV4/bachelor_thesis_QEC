@@ -20,6 +20,23 @@ import matplotlib.pyplot as plt
 from qiskit.providers.aer.noise import NoiseModel
 import qiskit.quantum_info as qi
 
+#####
+#### Shor encoding
+####
+
+qc_3qx=QuantumCircuit(9)
+qc_3qx.cx(0,3)
+qc_3qx.cx(0,6)
+qc_3qx.h(0)
+qc_3qx.h(3)
+qc_3qx.h(6)
+qc_3qx.cx(0,1)
+qc_3qx.cx(0,2)
+qc_3qx.cx(3,4)
+qc_3qx.cx(3,5)
+qc_3qx.cx(6,7)
+qc_3qx.cx(6,8)
+qc_3qx.draw('mpl', filename='Shor_enc.png')
 
 aer_sim = Aer.get_backend('aer_simulator')
 ######
@@ -56,6 +73,14 @@ qc_3qx.barrier()
 qc_3qx.append(qe,[0,1,2])
 qc_3qx.draw('mpl')
 plt.show()
+# cr2=ClassicalRegister(3, 'outcome')
+# qc_3qx.add_register(cr2)
+# qc_3qx.measure([0,1,2],[0,1,2])
+# qc_3qx.draw('mpl')
+# result = execute(qc_3qx, backend=aer_sim,shots=100000).result()
+# counts = result.get_counts(0)
+# plot_histogram(counts, sort="hamming", target_string="000" )
+# plt.show()
 
 #####
 #Create the error model
@@ -82,22 +107,24 @@ noise_model.add_all_qubit_quantum_error(phase_flip2, 'error')
 # qc_3qx.draw('mpl')
 # basis_gates = noise_model.basis_gates
 # print(basis_gates)
-# result = execute(qc_3qx, Aer.get_backend('qasm_simulator'),
+# result = execute(qc_3qx, backend=aer_sim,
 #                   noise_model=noise_model,shots=100000).result()
 # counts = result.get_counts(0)
-# plot_histogram(counts)
+# plot_histogram(counts, sort="hamming", target_string="000" )
 # plt.show()
-for i in range (0,qc_3qx.num_qubits):
-    qc_3qx.h(i)
+
 
 #######
 #Create the 3bi-flip error correction code 
 #######
+for i in range (0,qc_3qx.num_qubits):
+    qc_3qx.h(i)
 k=2
 anc=QuantumRegister(k, 'auxiliary') ### Ancilla qubit
 qc_3qx.add_register(anc)
 cr=ClassicalRegister(k, 'syndrome') ### Classical register for syndrome extraction
 qc_3qx.add_register(cr)
+qc_3qx.barrier()
 qc_3qx.cx(0,3)
 qc_3qx.cx(1,3)
 qc_3qx.cx(1,4)
@@ -115,14 +142,19 @@ qc_3qx.x(0).c_if(cr, 1) ###condition is in binary
 qc_3qx.x(1).c_if(cr, 3)
 qc_3qx.x(2).c_if(cr, 2)
 qc_3qx.barrier()
-
+####
+#Decoding
+####
+qc_3qx.cx(0,2)
+qc_3qx.cx(0,1)
 ###
 # Simulation
 ###
+qc_3qx.draw('mpl', filename="3phaseflipcode.png")
 cr2=ClassicalRegister(3, 'outcome')
 qc_3qx.add_register(cr2)
 qc_3qx.measure([0,1,2],[2,3,4])
-qc_3qx.draw('mpl', filename="3phaseflipcode.png")
+
 counts=execute(qc_3qx,backend = aer_sim, optimization_level=0, noise_model= noise_model, shots=10000).result().get_counts()
 plot_histogram(counts)
 plt.show()

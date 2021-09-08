@@ -60,15 +60,15 @@ def Encoding7():
     q_encoding.cx(3,4)
     q_encoding.cx(3,5)
     q_encoding.cx(3,6)
-    #q_encoding.draw('mpl')
-    #plt.show()
+    q_encoding.draw('mpl',  filename='Encoding_Seven')
+    plt.show()
     return q_encoding
 qc_3qx.append(Encoding7(),all_qubits)
 qc_3qx.barrier()
 
 qc_3qx.append(qe, all_qubits)
 qc_3qx.barrier()
-# qc_3qx.draw('mpl')
+# qc_3qx.draw('mpl', filename='Encoding_Seven')
 # plt.show()
 
 
