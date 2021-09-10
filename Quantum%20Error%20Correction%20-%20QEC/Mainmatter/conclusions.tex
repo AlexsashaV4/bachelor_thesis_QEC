@@ -1,0 +1,66 @@
+\chapter{Conclusions}
+We have seen that during quantum computation decoherence and errors are inevitable due to the noise and very often if no protocol for error correction is applied they can lead to incorrect results.
+
+In fact, in the first chapter, I showed what are the causes of the decoherence and source of errors, after a brief introduction to quantum computing. In addition, I showed some basic tools that are helpful to get a good analysis of the noise such as CPTP maps and fidelity.
+
+Then, I showed that in quantum mechanics is impossible to clone an arbitrary state, preventing us from using the same "copy and paste" technique that is widely used in classical error correction.
+
+In order to approach some quantum error-correcting codes and techniques, I started from the 3 qubit code as an example to show the basic principles in quantum error correction followed by the conditions under which it can create a quantum error correction code.
+
+However, life is not so simple such as the 3 qubit code, more powerful tools have to be developed when the numbers of qubits start rising. I showed the basic principle of the stabiliser formalism and then showed some more codes that prevent the computation to fail.
+
+In the last chapter, I showed what is fault-tolerant computation and why it is important to achieve it. In addition, I presented one of the most important results of fault-tolerant: the threshold theorem, which states that is possible to have a reliable quantum computation if the error rate of a physical system is below a threshold value.   
+These are only the basics of this big field in quantum computing and not only, but further applications and new codes have also been developed during the years, one of the most promising quantum error correction codes are the topological codes, which have been thought of first by Kitaev in 1997, and developed more in deep in these days \cite{Kitaev_1997} \cite{Spinmodel}.
+If I had more time to work on this thesis, I would have read more on topological codes and try to implement one of them. 
+
+
+In the end, I developed the computational part using the qiskit library and their simulators \cite{Qiskit}. Furthermore, I tried to implement my circuit on a real IBM quantum computer, but I ran into 2 problems. The first: each circuit requires a conditional operation (applying a gate if and only if a classical register shows a specific bit-string), and currently no quantum computer to which I have access can do this skill. The second is that I had only access to quantum computers with a maximum of 5 qubits. 
+It is possible to see, on my \href{https://github.com/AlexsashaV4/bachelor_thesis_QEC.git}{GitHub} page that I tried to implement the 3 qubit code using only 5 qubits in total and no classical register. The simulation on a real quantum computer gives no correct results because too many gates are involved along the quantum error correction circuit, so the noise affected directly the gates involved in the encoding, recovery, measurement yielding a very noisy result.  
+
+
+
+
+
+
+In the end, I have to quote the ‘Quantum Error Correction Sonnet’ written by Daniel Gottesmann: 
+
+\centering
+We cannot clone, perforce; instead, we split 
+
+Coherence to protect it from that wrong 
+
+That would destroy our valued quantum bit 
+
+And make our computation take too long.
+
+\bigskip
+
+Correct a flip and phase – that will suffice.
+
+If in our code another error’s bred,
+
+
+We simply measure it, then God plays dice, 
+
+Collapsing it to X or Y or zed.
+
+\bigskip
+
+We start with noisy seven, nine, or five
+
+
+And end with perfect one. To better spot
+
+
+Those flaws we must avoid, we first must strive 
+
+To find which ones commute and which do not.
+\bigskip
+
+With group and eigenstate, we’ve learned to fix
+
+
+Your quantum errors with our quantum tricks.
+
+
+– ‘Quantum Error Correction Sonnet’, by Daniel Gottesman

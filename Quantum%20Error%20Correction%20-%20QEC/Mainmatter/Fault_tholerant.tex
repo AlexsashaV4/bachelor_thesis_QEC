@@ -1,14 +1,19 @@
 \chapter{Fault-Tolerant computation}
-\section{Introduction to fault tolerant computation}
+In this last chapter I will discuss how to make a circuit even more resistant to error propagation through fault-tolerant procedures, which are described more in deep in : \cite{DanielGottesman}\cite{gottesman2009introduction}. In the end, I will present an important result: the threshold theorem, which states that arbitrarily long reliable fault-tolerant quantum computation is possible if the error rate of a physical system is below some threshold value. 
+
+
+
+
+\section{Introduction to fault-tolerant computation}
 So far we had a sort of communication scenario where Alice wants to send information to Bob and the error occurs in the noisy channel. 
 Then we developed good algorithms to contrast errors that happen in between, protecting the information.
-To do that we supposed that Alice and Bob were dealing with perfect quantum computers with perfect gates and perfect operations. 
+To do that we supposed that Alice and Bob were dealing with perfect quantum computers with ideal gates and ideal operations (i.e not subjected to errors). 
 However, nature is far from this. 
 The error can occur while we are doing any quantum operations, also during the quantum error correction procedure.
-Noise afflicts each of the elements used to build this circuit : the state preparation procedures, quantum logic gates, measurement of the output, and even the simple transmission of quantum information along quantum wires.
+Noise afflicts each elements used to build circuits: the state preparation procedures, quantum logic gates, measurement of the output, and even the simple transmission of quantum information along quantum wires.
 
 To face this problem we can use fault-tolerant computation, which computes directly on encoded quantum states in such a manner that decoding is never required. Hence, each qubit in the original circuit is replaced with an encoded block of qubits, using an error-correcting code such as the seven qubit Steane code, and each gate in the original circuit is replaced with a procedure for performing an encoded gate acting on the encoded state. 
-One might think performing error-correction periodically after every operation, but this is not sufficient to prevent the build-up of errors.
+One might think performing error-correction periodically after each operation, but this is not sufficient to prevent the errors formations.
 %Two are the reasons: first, the encoded gates can cause errors to propagate and second is that error-correction itself can introduce errors on the encoded qubits, so we must be careful to design error-correction procedures that do not introduce too many errors into the encoded data
 %%%%%%%%%
 %Aggiusta 
@@ -19,9 +24,9 @@ One might think performing error-correction periodically after every operation, 
 %ERROR PROPAGATION
 %%%%%%%%%
 
-In fact, when we perform multiple qubits gates during a quantum computation, any existing error can propagate to other qubits, even if the gate itself can be considered perfect.
+In fact, when we perform multiple qubits gates during a quantum computation, any existing error can propagate to other qubits, even if the gate itself can be considered ideal.
 For instance, a CNOT gate can propagate forward (from control qubit to the target qubit) a bit-flip error. In figure \ref{fig:CNOT_prop} a bit-flip error occurs on the control qubit just before the CNOT gate.
-This single error will cascade forward (from control to target) such that the X error propagates on both output qubits after the gate.
+This single error will cascade forward such that the X error propagates on both output qubits after the gate.
 
 We started with 1 error and we ended up with 2 errors. 
 \begin{figure}[h!]
@@ -30,7 +35,7 @@ We started with 1 error and we ended up with 2 errors.
     \caption{A CNOT gate can cause a X error to propagate forward so that instead of affecting one qubit, it affects two. This is also true when encoded qubits are used, and an encoded CNOT is implemented.}
     \label{fig:CNOT_prop}
 \end{figure}
-
+\renewcommand{\arraystretch}{1}
 Another example, that has not any classical analogy, is the backwards (from target to control) propagation. Imagine having a CNOT and a Z error occurs just before on the target qubit, then after the CNOT we will have 2 phase errors on both qubits as shown in figure \ref{fig:CNOT_prop2} .
 
 \begin{figure}[h!]
@@ -39,13 +44,13 @@ Another example, that has not any classical analogy, is the backwards (from targ
     \caption{A CNOT gate can cause a Z error to propagate backwards so that instead of affecting one qubit, it affects two. This is also true when encoded qubits are used, and an encoded CNOT is implemented.}
     \label{fig:CNOT_prop2}
 \end{figure}
-This is clearly a problem if we build an arbitrary circuit that implements CNOT gates and a QECC that corrects up to 1 error, it is not able to correct the propagated error anymore.
+This is clearly a problem if we build an arbitrary circuit that implements CNOT gates and a QECC that corrects up to 1 error is not able to correct the propagated error anymore.
 Thus, by error propagation, a correctable local error is converted into a non-correctable one. The procedure described is thus not fault tolerant.
 
 
 
 
-Hence, to achieve a fault tolerant computation we first need to implement fault tolerant logic operations, which prevent the building up of errors in the same error correction block. A solution is to perform logic gates transversally - i.e. a transversal gate interacts the ith qubit in one block with the ith qubit of the other block. Recall single encoded qubit gates involving only one block are transversal, because the ith qubit interacts with itself.
+Hence, to achieve a fault tolerant computation we first need to implement fault tolerant logic operations, which prevent the building up of errors in the same error correction block. A solution is to perform logic gates transversally - i.e. a transversal gate interacts the ith qubit in one block with the ith qubit of the other block. Recall that single encoded qubit gates involving only one block are transversal, because the ith qubit interacts with itself.
 For instance, in the Steane code the logical $\Bar{X}=X^{\otimes 7} $ and $\Bar{Z}=Z^{\otimes 7}$ operations on a single encoded
 qubit are the first examples of valid transversal codeword operations.
 % The spreading of single-qubit errors during imperfect gates to more than one qubit in the output can be prevented if the gates are implemented in a transversal manner. That is, the gates shall be implemented using only independent operations on each of the physical qubits. Logical gates that are implemented in this way are naturally fault-tolerant since any error on a single physical qubit can not propagate to another physical qubit in the encoded state.
@@ -54,18 +59,18 @@ Furthermore, the performed operations must map codewords to codewords.
 
 
 
-More precisely, if a given logical state, $|\psi\rangle_{L}$ is stabilized by $M \in \mathcal{S}$, and the logical operation $U$ is applied, the new state, $U|\psi\rangle_{L}$ is stabilized by $U M U^{\dagger} \in \mathcal{S}$, i.e,
+More precisely, if a given logical state $|\psi\rangle_{L}$ is stabilized by $M \in \mathcal{S}$, and the logical operation $U$ is applied, the new state $U|\psi\rangle_{L}$ is stabilized by $U M U^{\dagger} \in \mathcal{S}$, i.e,
 \begin{equation}
 (U M U^{\dagger}) U|\psi\rangle_{L}=U M|\psi\rangle_{L}=U|\psi\rangle_{L}
 \end{equation}
 Hence, for $U$ to preserve the codespace, $U M U^{\dagger}$ must be in the stabiliser set.
 This properties is satisfied for any $U \in \mathbf{C}$ where $\mathbf{C}$ is called the Clifford group:
 \begin{definition}
-Let $\mathcal{P}_{n}$ be the Pauli group on $n$ qubits and let $\mathcal{U}\left(2^{n}\right)$ be the unitary group. The Clifford group $\mathbf{C}_{n}$ on $n$ qubits is,
+Let $\mathcal{P}_{n}$ be the Pauli group on $n$ qubits and let $\mathcal{U}\left(2^{n}\right)$ be the unitary group. The Clifford group $\mathbf{C}_{n}$ on $n$ qubits is:
 \begin{equation}
 \mathbf{C}_{n}=\left\{U \in \mathcal{U}\left(2^{n}\right): U P U^{\dagger} \in \mathcal{P}_{n} \text { for all } P \in \mathcal{P}_{n}\right\}
 \end{equation}
-The Clifford group on $n$ qubits can be generated by Hadamard gate $H, R_{\pi / 4}$ gate, and CNOT gate, where
+The Clifford group on $n$ qubits can be generated by the Hadamard gate $H, R_{\pi / 4}$ gate, and CNOT gate, where
 $$
 H=\frac{1}{2}\left(\begin{array}{cc}
 1 & 1 \\
@@ -81,37 +86,37 @@ H=\frac{1}{2}\left(\begin{array}{cc}
 \end{array}\right) .
 $$
 \end{definition}
-From this we can notice also how error how errors change after applying quantum gates: 
+From this we can notice also how errors change after applying quantum gates: 
 the operation of $U$ on an erroneous codeword $E|\psi\rangle$ gives,
 \begin{equation}
 U E|\psi\rangle=\left(U E U^{\dagger}\right) U|\psi\rangle
 \label{eq:spread}
 \end{equation}
-Observe that $U|\psi\rangle$ is a state from the operation of $U$ on state $|\psi\rangle$.
+Observe that $U|\psi\rangle$ is itself a state, that comes from the operation of $U$ on the state $|\psi\rangle$.
 Here we can see that the error $E$ before the operation $U$ becomes $U E U^{\dagger}$ after the operation of $U$. 
 So now our goal is to implement the generators of clifford group in a fault-tolerant way. Let us think this in the context of the seven qubit code $[[7,1,3]]$ with its stabiliser set (\ref{eq:stabSteane}). 
 
 \subsection*{Fault-tolerant Hadamard and $R_{\pi/4}$}
-A logical Hadamard gate $\bar{H}$ interchanges $\bar{Z}$ and $\bar{X}$ under conjugation, just as the Hadamard gate $H$ interchanges $Z$ and $X$ under conjugation. $\bar{H}= H^{\otimes 7}$ accomplishes this task, so that a Hadamard on the encoded qubit can be implemented as in figure \ref{fig:logHada}
+A logical Hadamard gate $\bar{H}$ interchanges $\bar{Z}$ logical and $\bar{X}$ logical under conjugation, just as the Hadamard gate $H$ interchanges $Z$ and $X$ under conjugation. $\bar{H}= H^{\otimes 7}$ accomplishes this task, so that a Hadamard on the encoded qubit can be implemented as in figure \ref{fig:logHada}
 \begin{figure}[h!]
     \centering
     \includegraphics[scale=0.5]{Mainmatter/images/LogicalHadamard.png}
-    \caption{This figure shows the logical hadamard gate. On the right is showed a more compact notation, the 7 and the slash on the wire indicate that we are operating on an encoded state}
+    \caption{This figure shows the logical hadamard gate. On the right is showed a more compact notation: the 7 and the slash on the wire indicate that we are operating on an encoded state}
     \label{fig:logHada}
 \end{figure}
 
-This is fautl-tolerant because the failure of a single component in the circuit can cause at most one error in the block of qubits output from the procedure. To see that this is true suppose that a $Z$ error occurs on the first qubit just before the encoded $H$ gate was applied. The combined operation on the qubit is $H Z$. Then, we can use the equation \ref{eq:spread}, which describes how an error spreads after applying a gate, hence it gives $H Z =(H Z H^{\dagger})H=X H$, so such an error is equivalent to first applying $H$ then the error $X$ occurring.
+This is fault-tolerant because the failure of a single component in the circuit can cause at most one error in the block of qubits output from the procedure. To see that this is true suppose that a $Z$ error occurs on the first qubit just before the encoded $H$ gate was applied. The combined operation on the qubit is $H Z$. Then, we can use the equation \ref{eq:spread}, which describes how an error spreads after applying a gate. Hence it gives $H Z =(H Z H^{\dagger})H=X H$, so such an error is equivalent to o first the application of $H$ and then the occurring of $X$.
 
 Moreover, $\Bar{H}$ maps stabilisers in other stabiliser, let us take the first stabilizer $M_1=ZZZZIII \in \mathcal{S}$ and we see that $\Bar{H} M_1 \Bar{H} = M_4 =XXXXIII $ which is still in the stabilizer. 
 
-A very similar construction can be implemented also for the $\frac{\pi}{4}$ logical operation.  The $\frac{\pi}{4}$ rotation gate single qubit $R_{\pi/4}$ gate leaves $Z$ unaltered, while $X$ is mapped to $Y=iXZ$. However, applying 
+A very similar construction can be implemented also for the $\frac{\pi}{4}$ logical operation.  The $R_{\pi/4}$ gate leaves $Z$ unaltered, while $X$ is mapped to $Y=iXZ$. However, applying 
 $\Bar{R_{\pi/4}}=R_{\pi/4}^{\otimes7}$ takes $\bar{Z}$ to $\bar{Z}$ under conjugation, and $\bar{X}$ to $-\bar{Y}.$ The minus sign in front of the $-\bar{Y}$ may be fixed up by applying $\bar{Z}$.
-Thus, applying the operation $Z R_{\pi/4}$ to each qubit in the code effects an encoded phase gate, which is transversal and thus fault-tolerant.
+Thus, applying the operation $Z R_{\pi/4}$ to each qubit in the code affects an encoded phase gate, which is transversal and thus fault-tolerant.
 
 
 \subsection*{Fault-tolerant CNOT gate}
 
-A two qubit logical CNOT operation can also be applied in the same transversal way. For un-encoded qubits, a CNOT operation performs the following mapping on the two qubit stabilizer set,
+A two qubit logical CNOT operation can also be applied in the same transversal way. For unencoded qubits, a CNOT operation performs the following mapping on the two qubit stabilizer set,
 $$
 \begin{array}{l}
 X \otimes I \rightarrow X \otimes X \\
@@ -120,7 +125,7 @@ Z \otimes I \rightarrow Z \otimes I \\
 I \otimes X \rightarrow I \otimes X .
 \end{array}
 $$
-Where the first operator corresponds to the control qubit and the second operator corresponds to the target. This can be extended to the logical space, we can apply the logical CNOT operation between two encoded states: 
+Where the first operator corresponds to the control qubit and the second operator corresponds to the target. This can be extended to the logical space. We can apply the logical CNOT operation between two encoded states: 
 $$
 \begin{array}{l}
 \bar{X} \otimes I \rightarrow \bar{X} \otimes \bar{X}, \\
@@ -129,7 +134,7 @@ I \otimes \bar{Z} \rightarrow \bar{Z} \otimes \bar{Z}, \\
 I \otimes \bar{X} \rightarrow I \otimes \bar{X} .
 \end{array}
 $$
-The issue of Fault-tolerance with these logical operations should be clear. The $\bar{X}, \bar{Z}, \bar{H}$ and $\bar{R}_{\frac{\pi}{4}}$ gates are fault-tolerant since the logical operation is performed through seven single qubit gates. The logical CNOT is also fault-tolerant since each two-qubit gate only operates between counterpart qubits in each logical block as shown in figure \ref{fig:TransCNOT} . Hence if any gate is inaccurate, then at most a single error will be introduced in each block, and we are able to correct 1 error per block. 
+The issue of Fault-tolerance with these logical operations should be clear. The $\bar{X}, \bar{Z}, \bar{H}$ and $\bar{R}_{\frac{\pi}{4}}$ gates are fault-tolerant since the logical operation is performed through seven single qubit gates. The logical CNOT is also fault-tolerant since each two-qubit gate only operates between the corresponding qubits in each logical block as shown in figure \ref{fig:TransCNOT} . Hence if any gate is inaccurate, then at most a single error will be introduced in each block, and we are able to correct 1 error per block. 
 \begin{figure}[h!]
     \centering
     \includegraphics[scale=0.5]{Mainmatter/images/Transversal_CNOT.png}
@@ -158,10 +163,10 @@ Nevertheless, the Clifford group is not an universal set of operation.
 The Gottesman-Knill theorem states that if a quantum circuit consists of only these elementary operations, the operation of the circuit can be efficiently simulated by a classical computer \cite{gottesman1998heisenberg}. This means that if we want to construct a quantum computer that fully exploits the power of quantum computation, only aforementioned operations are not sufficient.
 
 In order to achieve universality one of the following gates are generally added to the available set: $R_{\pi/8}$ or the Toffoli gate. 
-Although both gates can be implemented in a fault-tolerant way through a more complicate procedure called "Magic state injection", in the following it will focus only the fault-tolerant implementation of  $R_{\pi/8}$ gate. 
+Although both gates can be implemented in a fault-tolerant way through a more complicate procedure called "Magic state injection", in the following we will focus only on the fault-tolerant implementation of  $R_{\pi/8}$ gate. 
 
 The basic idea of this procedure is based on the concept of teleportation, which is briefly described in the appendix.
-Let us begin by not worrying about fault-tolerance, and simply attempt to perform some gate $\bar{U}$ on an encoded state. 
+Let us begin by not considering about fault-tolerance, and simply attempt to perform some gate $\bar{U}$ on an encoded state. 
 We will consider the case of a single-qubit gate $\Bar{U}$ first. \cite{gottesman2009introduction}
 
 \begin{figure}[h!]
@@ -173,9 +178,9 @@ We will consider the case of a single-qubit gate $\Bar{U}$ first. \cite{gottesma
 Suppose we were to perform quantum teleportation (this means to apply the require pauli $\Bar{Q}$ gates once we get the instructions from classical measurements) and then follow it, somehow, by an implementation of $\Bar{U}$. Thus on input state $\ket{\psi}$, the overall output state would be $U\ket{\psi}$. 
 Now imagine that the receiver (Bob), who controls the output block, perform $\Bar{U}$ earlier than intended, before the senders’s (Alice) measurement outcome instructions.
 Eventually Alice performs the logical Bell measurement and sends Bob the two classical bits describing the outcome, corresponding to a logical Pauli $\Bar{Q}$.
-To complete the teleportation procedure, Bob needs to do something different now, he can't do the same pauli operation as before: first, he must undo the $\bar{U}$ he performed prematurely, then perform $\Bar{Q}$, and then finally redo $\bar{U}$, now in the correct place. That is, he should implement the gate $\Bar{U}Q\Bar{U}^{\dagger}$. This procedure is pictured in figure $\ref{fig:fault_teleport}$. It may not seem like we have gained anything by doing this, but for some special gates $U$, we have. We can imagine the state $(I \otimes \bar{U})(|\overline{00}\rangle+|\overline{11}\rangle)$ as a special ancilla state, a replacement for the EPR pair normally used in teleportation, and we can prepare it separately. Since it is a fixed ancilla state, independent of the data, we can apply some special tricks to preparing it.
+To complete the teleportation procedure, Bob needs to do something different now, he can't do the same pauli operation as before: first, he must undo the $\bar{U}$ he performed prematurely, then perform $\Bar{Q}$, and then finally redo $\bar{U}$, now in the correct place. That is, he should implement the gate $\Bar{U}Q\Bar{U}^{\dagger}$. This procedure is pictured in figure $\ref{fig:fault_teleport}$. It may not seem like we have gained anything by doing this, but for some special gates $U$, we have. We can imagine the state $(I \otimes \bar{U})(|\overline{00}\rangle+|\overline{11}\rangle)$ as a special ancilla state, a replacement for the EPR pair normally used in teleportation, and we can prepare it separately. Since it is a fixed ancilla state, independent of the data, we can apply some special tricks to prepare it.
 
-We still have to perform the gate $\Bar{U} \Bar{Q}\Bar{U^{\dagger}}$, which cannot be done ahead of time on the ancilla, since $Q$ depends on the outcome of a logical Bell measurement on the data block. However, the gate $\Bar{U} \Bar{Q}\Bar{U^{\dagger}}$ might be simpler to perform than $\bar{U}$ was. For instance, when $U \in \mathbf{C}_{1}, \bar{U} \bar{Q} \bar{U}^{\dagger} \in \mathcal{P}_{1}$ that is the defining property of the Clifford group. For some gates $U \notin \mathcal{C}_{1}$, it is nonetheless still true that $\bar{U} \bar{Q} \bar{U}^{\dagger} \in \mathbf{C}_{1}$ for any $\bar{Q} \in \mathcal{P}_{1}$. For instance, the $\pi/8$ rotation $R_{\pi/8}$ has this property:
+We still have to perform the gate $\Bar{U} \Bar{Q}\Bar{U^{\dagger}}$, which cannot be done ahead of time on the ancilla, since $Q$ depends on the outcome of a logical Bell measurement on the data block. However, the gate $\Bar{U} \Bar{Q}\Bar{U^{\dagger}}$ might be simpler to perform than $\bar{U}$ was. For instance, when $U \in \mathbf{C}_{1}, \bar{U} \bar{Q} \bar{U}^{\dagger} \in \mathcal{P}_{1}$ that is the defining property of the Clifford group. For some gates $U \notin \mathbf{C}_{1}$, it is nonetheless still true that $\bar{U} \bar{Q} \bar{U}^{\dagger} \in \mathbf{C}_{1}$ for any $\bar{Q} \in \mathcal{P}_{1}$. For instance, the $\pi/8$ rotation $R_{\pi/8}$ has this property:
 $$
 \begin{array}{l}
 R_{\pi / 8} X R_{\pi / 8}^{\dagger}=\left(\begin{array}{cc}
@@ -191,7 +196,7 @@ One can define a set $C_{k}=\left\{U \mid U Q U^{\dagger} \in C_{k-1} \forall Q 
 This whole procedure gives us an indication of how to perform a universal set of fault-tolerant gates. For the 7-qubit code, and some similar CSS codes, we already know how to perform all logical Clifford group operations. The Bell measurement is a Clifford group operation, and now we have seen that $R_{\pi / 8} Q R_{\pi / 8}^{\dagger}$ is also a Clifford group operation for $Q \in \mathcal{P}$.  
 
 
-The correction required after teleportation is a Clifford group gate, for which we already know a fault-tolerant procedure. This yield to the possibility to have universal quantum computation procedure in a complete fault-tolerant way.
+The correction required after teleportation is a Clifford group gate, for which we already know a fault-tolerant procedure. This yield to the possibility of having universal quantum computation procedures in a complete fault-tolerant way.
 
 
 
@@ -206,8 +211,8 @@ The threshold theorem is one of the most remarkable results in fault-tolerant co
 
 
 
-One possible way to prove the threshold theorem and build a reliable quantum computation is by using fault tolerant protocols and concatenating codes.
-If an error occurs during a logical gate operation, then Fault-tolerance ensures this error will only propagate to at most one error in each encoded block, after which a cycle of error correction will remove the error. Hence if the failure probability of un-encoded qubits per time step is $p$, then a single level of error correction will ensure that the logical step fails only when two (or more) errors occur. Hence the failure rate of each logical operation, to leading order, is now $p_L = cp^2$, where $p_L$ is the failure rate (per logical gate operation) of a first level logical qubit, and $c$ is the upper bound for the number of possible 2-error combinations which can occur at a physical level within the circuit\footnote{In this specific case $c$ is the number of possible 2-error combinations, because we used a QECC that can correct 1 error. If we use different QECC codes that corrects t-errors the upper bound $c$ becomes: $c=\left(\begin{array}{c}
+One possible way to prove the threshold theorem and build a reliable quantum computation is by using fault tolerant protocols and concatenating codes \cite{Fault}.
+If an error occurs during a logical gate operation, then fault-tolerance ensures that this error will only propagate to at most one error in each encoded block, after which a cycle of error correction will remove the error. Hence if the failure probability of unencoded qubits per time step is $p$, then a single level of error correction will ensure that the logical step fails only when two (or more) errors occur. Hence the failure rate of each logical operation, to leading order, is now $p_L = cp^2$, where $p_L$ is the failure rate (per logical gate operation) of a first level logical qubit, and $c$ is the upper bound for the number of possible 2-error combinations which can occur at a physical level within the circuit\footnote{In this specific case $c$ is the number of possible 2-error combinations, because we used a QECC that can correct 1 error. If we use different QECC codes that corrects t-errors the upper bound $c$ becomes: $c=\left(\begin{array}{c}
        G\\
        t+1
  \end{array}\right)$ where G is the total number of gates. 
@@ -236,16 +241,16 @@ This idea replaces each physical qubit at layer $k$ by an encoded qubit. An exam
     \label{fig:codeconc}
 \end{figure}
 
-If we perform error correction at each layer of concatenation, then if the bare qubit experiences an error probability of $p$, then after one layer of error correction the logical error probability is $c p^{2}$, and after two layers, the logical error probability is $c\left(c p^{2}\right)^{2}$ (since two blocks have to fail and each block has failure probability $\left.c p^{2}\right)$. With each concatenation later, even though the number of qubits is grows exponentially in k, we get a gain in error probability. That is:
+If we perform error correction at each layer of concatenation, then if the bare qubit experiences an error probability of $p$, then after one layer of error correction the logical error probability is $c p^{2}$, and after two layers, the logical error probability is $c\left(c p^{2}\right)^{2}$ (since two blocks have to fail and each block has failure probability $\left.c p^{2}\right)$. With each concatenation layer, even though the number of qubits is grows exponentially in k, we get a loss in error probability. That is:
 $$
 \begin{array}{cccccccccc}
 \text { level } 0 & & \text { level } 1 & & \text { level } 2 & & \ldots  & & \text { level } k\\
-p &\rightarrow & c p^{2} &\rightarrow & c\left(c p^{2}\right)^{2} &\rightarrow& \ldots &\rightarrow& c^{-1}(c p)^{2^{k}}
+p &\rightarrow & c p^{2} &\rightarrow & c^{-1}\left(c p^{2}\right)^{2} &\rightarrow& \ldots &\rightarrow& c^{-1}(c p)^{2^{k}}
 \end{array}
 $$
-And we are guaranteed that this is a gain $(i . e .$, that the error probability decreases with level of concatenation) if
+And we are guaranteed that the error probability decreases with level of concatenation if
 \begin{equation}
-p > c p^2
+p > c p^2.
 \label{eq:plesscpp}
 \end{equation}
 
@@ -261,7 +266,7 @@ $$
 Note that the number of gates needed grows exponentially in k, but recall that the error probability reduced doubly exponentially in k. This suggests that we can win with this approach. But to see this convincingly, let us see how many gates we need to achieve a given error probability in the computation. Suppose we wish to achieve a final accuracy of $\epsilon \geq 0$ in our simulation of our algorithm.
 Then we want that the total error rate is below $\epsilon$: 
 $$
-T p_{k}=T c^{-1}(c p)^{2^{k}}<\epsilon
+T p_{k}=T c^{-1}(c p)^{2^{k}}<\epsilon,
 $$
 for some concatenation level $k$. Here $T$ is the number of logical quantum gates needed to perform the computation (which is the same as the number of gates necessary at the unencoded level), and $p_{k}$ is the error probability per logical gate at concatenation level $k$.
 
@@ -269,37 +274,37 @@ for some concatenation level $k$. Here $T$ is the number of logical quantum gate
 We can solve for $k$ to get
 $$
 \begin{aligned}
-&(c p)^{2^{k}}<\frac{\epsilon c}{T} \\
-\Rightarrow \quad & 2^{k}<\log _{c p}\left(\frac{\epsilon c}{T}\right)=\frac{\log_2 \left(\frac{\epsilon c}{T}\right)}{\log_2 (c p)} \\
-\Rightarrow \quad & k<\log_2 \left[\frac{\log_2 \left(\frac{\epsilon c}{T}\right)}{\log_2 (c p)}\right]
+(c p)^{2^{k}}&<\frac{\epsilon c}{T} \\
+ \quad  2^{k}&<\log _{c p}\left(\frac{\epsilon c}{T}\right)=\frac{\log_2 \left(\frac{\epsilon c}{T}\right)}{\log_2 (c p)} \\
+\quad  k&<\log_2 \left[\frac{\log_2 \left(\frac{\epsilon c}{T}\right)}{\log_2 (c p)}\right].
 \end{aligned}
 $$
 From this upper bound on the concatenation level we can also form an upper bound the number of physical gates we will need to achieve this level $\epsilon$ of logical error. 
 
 We calculated above that at concatenation level $k$ we need $N^{k} T$ gates. Then,
 $$
-N^{k} T<N^{\log \left(\frac{\log \left(\frac{\epsilon c}{T}\right)}{\log (c p)}\right)} R
+N^{k} T<N^{\log \left(\frac{\log \left(\frac{\epsilon c}{T}\right)}{\log (c p)}\right)} T.
 $$
 
 
-But using $\log _{a} x=\frac{\log _{b} x}{\log _{b} a}$, we simplify
+Using $\log _{a} x=\frac{\log _{b} x}{\log _{b} a}$, we simplify
 $$
 N^{\log (\cdot)}=\left(N^{\log _{N}(\cdot)}\right)^{\frac{1}{\log _{N} 2}}=(\cdot)^{\log N}
 $$
-Using this, the number of gates needed is upper bounded by
+Then, the number of gates needed is upper bounded by
 $$
-\# \text{gates} = T\left(\frac{\log \left(\frac{T}{\epsilon c}\right)}{\log \left(\frac{1}{c p}\right)}\right)^{\log N} \sim  O(T\operatorname{poly}(\log T / \epsilon))
+\# \text{gates} = T\left(\frac{\log \left(\frac{T}{\epsilon c}\right)}{\log \left(\frac{1}{c p}\right)}\right)^{\log N} \sim  O(T\operatorname{poly}(\log T / \epsilon)).
 $$
 The original $T$ gates are scaled by the factor in braces. This factor is a polynomial in the log (is polylog) in $\frac{1}{\epsilon}$ (inverse error) and in $T$ (the number of gates in the unencoded computation). Therefore the cost of achieving arbitrary error by concatenation scales very favorably, and this is the power of the fault tolerance theorem: we can achieve an arbitrary error probability $\epsilon$ with resources that scale only polylogarithmically in the inverse of the desired error and the complexity of the computation to be performed $(T)$.
 
 Now, let us go back to Eq. \ref{eq:plesscp}, which defines the crucial condition for concatenation to be effective: $p>c p^{2}$. We can compute the value of $p$ that is at the boundary defined by this condition, $p=c p^{2}$. This value of $p$ is called the threshold probability, and is easily seen to be
 $$
-p_{\mathrm{th}}=c^{-1}
+p_{\mathrm{th}}=c^{-1},
 $$
 because we want that the error probability decreases further the concatenation goes on.
 Thus if the physical error probability is below this threshold probability $p<p_{\mathrm{th}}$, then concatenation and error correction is beneficial. Finally, writing the logical error probability at concatenation level $k$ in terms of $p_{\mathrm{th}}$ gives us
 $$
-p_{k}=c^{-1}(c p)^{2^{k}}=p_{\mathrm{th}}\left(\frac{p}{p_{\mathrm{th}}}\right)^{2^{k}}
+p_{k}=c^{-1}(c p)^{2^{k}}=p_{\mathrm{th}}\left(\frac{p}{p_{\mathrm{th}}}\right)^{2^{k}}.
 $$
 
 %%%%%%%%%%%
@@ -328,6 +333,7 @@ A more detailed derivation of the threshold theorem can be found in \cite{Daniel
 
 
 
-\section{Toric code}
-An active research field in quantum computing is to find codes that will increase $p_{th}$ to larger values. One of the codes that has had a lot of positive feedback and opens up to a larger class of codes (surface codes) is the Toric code.
+An active research field in quantum computing is to find codes that will increase $p_{th}$ to larger values.
+
+During the years has been developed, some much more complicated quantum error codes, such as the survace or color codes, which use intensively concept from QEC and topology. These codes also have had a lot of positive feedback and opens up to a larger class of codes and can operate under an higher threshold.
 
